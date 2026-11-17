@@ -471,8 +471,8 @@ public final class MainActivity extends Activity implements Runnable {
         window.setNavigationBarColor(startupChrome);
         int layoutFlags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-        window.getDecorView().setSystemUiVisibility(layoutFlags | (nightMode ? 0 :
-                (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)));
+//        window.getDecorView().setSystemUiVisibility(layoutFlags | (nightMode ? 0 :
+//                (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)));
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         if (Build.VERSION.SDK_INT >= 30) window.setDecorFitsSystemWindows(false);
         if (Build.VERSION.SDK_INT >= 28) {
@@ -901,7 +901,7 @@ public final class MainActivity extends Activity implements Runnable {
         topBar = new LinearLayout(this);
         topBar.setOrientation(LinearLayout.HORIZONTAL);
         topBar.setGravity(Gravity.CENTER_VERTICAL);
-        topBar.setPadding(dp(12), dp(8), dp(12), dp(8));
+        topBar.setPadding(dp(12), 0, dp(12), dp(8));
         topBar.setBackgroundColor(chromeBackground);
 
         addressPill = new LinearLayout(this);
@@ -936,7 +936,7 @@ public final class MainActivity extends Activity implements Runnable {
 
         progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progressBar.setMax(100);
-        progressBar.setProgressTintList(android.content.res.ColorStateList.valueOf(BLUE));
+        progressBar.setProgressTintList(ColorStateList.valueOf(BLUE));
         progressBar.setVisibility(View.GONE);
         progressBar.setElevation(dp(9));
         FrameLayout.LayoutParams progressParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(2), Gravity.TOP);
@@ -948,7 +948,7 @@ public final class MainActivity extends Activity implements Runnable {
         startupSurface = new LinearLayout(this);
         ((LinearLayout) startupSurface).setOrientation(LinearLayout.VERTICAL);
         ((LinearLayout) startupSurface).setGravity(Gravity.CENTER);
-        startupSurface.setPadding(dp(24), dp(24), dp(24), dp(24));
+        startupSurface.setPadding(dp(24), 0, dp(24), dp(24));
         startupSurface.setBackgroundColor(nightMode ? DARK_WEB : WHITE);
         ImageView startupMark = new ImageView(this);
         startupMark.setImageResource(R.drawable.ic_launcher_foreground);
@@ -968,7 +968,7 @@ public final class MainActivity extends Activity implements Runnable {
         startupStatus.setTextColor(nightMode ? DARK_MUTED : MUTED);
         startupStatus.setTextSize(12f);
         startupStatus.setGravity(Gravity.CENTER);
-        startupStatus.setPadding(0, dp(8), 0, 0);
+        startupStatus.setPadding(0, 0, 0, 0);
         ((LinearLayout) startupSurface).addView(startupStatus, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         webContainer.addView(startupSurface, new FrameLayout.LayoutParams(
@@ -986,7 +986,7 @@ public final class MainActivity extends Activity implements Runnable {
         bottomBar = new LinearLayout(this);
         bottomBar.setOrientation(LinearLayout.HORIZONTAL);
         bottomBar.setGravity(Gravity.CENTER);
-        bottomBar.setPadding(dp(10), dp(4), dp(10), dp(4));
+        bottomBar.setPadding(dp(10), 0, dp(10), dp(4));
         bottomBar.setBackgroundColor(chromeBackground);
         bottomBar.setElevation(dp(8));
 
@@ -1279,7 +1279,7 @@ public final class MainActivity extends Activity implements Runnable {
                 flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
             }
         }
-        decor.setSystemUiVisibility(flags);
+//        decor.setSystemUiVisibility(flags);
     }
 
     private BrowserIconView iconButton(int icon, String description) {
@@ -2504,7 +2504,7 @@ public final class MainActivity extends Activity implements Runnable {
             }
 
             @Override
-            public void onReceivedHttpAuthRequest(WebView view, final android.webkit.HttpAuthHandler handler, String host, String realm) {
+            public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, String host, String realm) {
                 if (view != webView || handler == null) { if (handler != null) handler.cancel(); return; }
                 final String expectedUrl = view.getUrl();
                 final String expectedHost = host == null ? "" : host.toLowerCase(Locale.US);
@@ -2753,8 +2753,8 @@ public final class MainActivity extends Activity implements Runnable {
                 if (which == 0) openUrlInNewTab(url, true);
                 else if (which == 1) openUrlInNewTab(url, false);
                 else if (which == 2) {
-                    android.content.ClipboardManager manager = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    if (manager != null) manager.setPrimaryClip(android.content.ClipData.newPlainText("链接", url));
+                    ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    if (manager != null) manager.setPrimaryClip(ClipData.newPlainText("链接", url));
                     toast("地址已复制");
                 } else if (which == 3) {
                     Intent share = new Intent(Intent.ACTION_SEND);
@@ -2995,10 +2995,10 @@ public final class MainActivity extends Activity implements Runnable {
                 if (allowed) openUrlInNewTab(url, args.optBoolean("active", true));
                 response = bridgeOk(allowed);
             } else if ("clipboard".equals(action)) {
-                android.content.ClipboardManager manager = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 String value = args.optString("v", "");
                 boolean allowed = source == webView && activityResumed && manager != null;
-                if (allowed) manager.setPrimaryClip(android.content.ClipData.newPlainText("UserScript", value));
+                if (allowed) manager.setPrimaryClip(ClipData.newPlainText("UserScript", value));
                 response = bridgeOk(allowed);
             } else if ("notification".equals(action)) {
                 String text = args.optString("text", "");
@@ -6275,8 +6275,8 @@ public final class MainActivity extends Activity implements Runnable {
                         try { uri = Uri.parse(url); } catch (RuntimeException ignored) {}
                         if (uri != null) {
                             String origin = uri.getScheme() + "://" + uri.getAuthority();
-                            android.webkit.WebStorage.getInstance().deleteOrigin(origin);
-                            android.webkit.GeolocationPermissions.getInstance().clear(origin);
+                            WebStorage.getInstance().deleteOrigin(origin);
+                            GeolocationPermissions.getInstance().clear(origin);
                         }
                         if (webView != null && host.equalsIgnoreCase(currentHost())) reloadWebView(webView);
                         toast("此网站数据已清除");
@@ -6626,8 +6626,8 @@ public final class MainActivity extends Activity implements Runnable {
         String url = currentPageUrl;
         if (url == null || !isNetworkPage(url)) return;
         String cleaned = UrlCleaner.cleanTracking(url);
-        android.content.ClipboardManager manager = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        if (manager != null) manager.setPrimaryClip(android.content.ClipData.newPlainText("无跟踪参数地址", cleaned));
+        ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if (manager != null) manager.setPrimaryClip(ClipData.newPlainText("无跟踪参数地址", cleaned));
         toast(url.equals(cleaned) ? "地址中没有已知跟踪参数" : "已复制清理后的地址");
     }
 
@@ -7145,17 +7145,17 @@ public final class MainActivity extends Activity implements Runnable {
     }
 
     private void copyText(String label, String text, String confirmation) {
-        android.content.ClipboardManager manager = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         if (manager == null) { toast("剪贴板不可用"); return; }
-        manager.setPrimaryClip(android.content.ClipData.newPlainText(label == null ? "Median" : label, text == null ? "" : text));
+        manager.setPrimaryClip(ClipData.newPlainText(label == null ? "Median" : label, text == null ? "" : text));
         toast(confirmation == null || confirmation.length() == 0 ? "已复制" : confirmation);
     }
 
     private void copyPageUrl() {
         String url = webView == null ? null : webView.getUrl();
         if (!isNetworkPage(url)) return;
-        android.content.ClipboardManager manager = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        if (manager != null) manager.setPrimaryClip(android.content.ClipData.newPlainText("页面地址", url));
+        ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if (manager != null) manager.setPrimaryClip(ClipData.newPlainText("页面地址", url));
         toast("页面地址已复制");
     }
 
@@ -7555,8 +7555,8 @@ public final class MainActivity extends Activity implements Runnable {
                         webView == null ? null : webView.getSettings().getUserAgentString(), null, resource.mime);
                 else if (which == 3) openUrlInNewTab(resource.url, true);
                 else if (which == 4) {
-                    android.content.ClipboardManager manager = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    if (manager != null) manager.setPrimaryClip(android.content.ClipData.newPlainText("媒体地址", resource.url));
+                    ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    if (manager != null) manager.setPrimaryClip(ClipData.newPlainText("媒体地址", resource.url));
                     toast("媒体地址已复制");
                 } else {
                     Intent share = new Intent(Intent.ACTION_SEND);
@@ -9269,7 +9269,7 @@ public final class MainActivity extends Activity implements Runnable {
         customView = null;
         browserChrome.setVisibility(View.VISIBLE);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().getDecorView().setSystemUiVisibility(previousSystemUi);
+//        getWindow().getDecorView().setSystemUiVisibility(previousSystemUi);
         setImmersiveSystemBars(chromeHiddenByScroll);
         rootFrame.requestApplyInsets();
         setRequestedOrientation(previousOrientation);
@@ -9831,7 +9831,7 @@ public final class MainActivity extends Activity implements Runnable {
                 } else if (which == 1) {
                     CookieManager.getInstance().removeAllCookies(null);
                     CookieManager.getInstance().flush();
-                    android.webkit.WebStorage.getInstance().deleteAllData();
+                    WebStorage.getInstance().deleteAllData();
                     toast("Cookie 与站点数据已清除");
                     showStoragePanel(backAction);
                 } else if (which == 2) {
@@ -9889,9 +9889,9 @@ public final class MainActivity extends Activity implements Runnable {
                         if (siteSettingsStore != null) siteSettingsStore.clearAll();
                         appliedSiteSettings.clear();
                         for (BrowserTab tab : tabs) if (tab.liveView != null) applySiteSettings(tab.liveView, pageHostFor(tab.liveView));
-                        android.webkit.WebStorage.getInstance().deleteAllData();
-                        android.webkit.GeolocationPermissions.getInstance().clearAll();
-                        android.webkit.WebViewDatabase database = android.webkit.WebViewDatabase.getInstance(MainActivity.this);
+                        WebStorage.getInstance().deleteAllData();
+                        GeolocationPermissions.getInstance().clearAll();
+                        WebViewDatabase database = WebViewDatabase.getInstance(MainActivity.this);
                         database.clearHttpAuthUsernamePassword();
                         database.clearFormData();
                         toast("浏览数据已清除");
@@ -10338,7 +10338,7 @@ public final class MainActivity extends Activity implements Runnable {
                 flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
                 flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
             }
-            window.getDecorView().setSystemUiVisibility(flags);
+//            window.getDecorView().setSystemUiVisibility(flags);
         }
         setImmersiveSystemBars(chromeHiddenByScroll);
     }
